@@ -1,0 +1,41 @@
+---
+description: "Use when implementing ML/DL code: config, dataset, training loop, inference wrapper, reproducibility, device placement, batch processing. For full examples see ml-training-patterns, ml-inference-patterns, ml-experiment-reproducibility skills."
+alwaysApply: false
+globs: ["**/*.py"]
+---
+
+# Common Patterns (Python ML/DL)
+
+Use when implementing ML/DL code. For full examples see the **ml-training-patterns**, **ml-inference-patterns**, and **ml-experiment-reproducibility** skills.
+
+## Configuration
+
+Use dataclasses (or Pydantic) for configs: model name, hidden size, batch size, learning rate, max epochs, output dir, seed. Paths: use pathlib (see always-apply).
+
+## Dataset
+
+Implement `__len__` and `__getitem__`; load data in `__init__`; return dicts with model inputs and labels.
+
+## Training Loop
+
+One epoch: `model.train()`, move batch to device, `optimizer.zero_grad()`, forward, `loss.backward()`, `optimizer.step()`, aggregate loss.
+
+## Inference Wrapper
+
+Class with `model.to(device).eval()`, `@torch.no_grad()` predict method that moves inputs to device and returns model output.
+
+## Reproducibility
+
+`set_seed(seed)` at start (torch, numpy, random); deterministic backends when possible. Document seed in config.
+
+## Device Placement
+
+Configurable device (e.g. from config or `cuda` if available else `cpu`); move model and all batch tensors to the same device; fallback to CPU when CUDA unavailable.
+
+## Batch Processing
+
+Use DataLoader with `num_workers`, `pin_memory`, `prefetch_factor` where appropriate. For large effective batch size, use gradient accumulation (scale loss by steps, step optimizer every N batches).
+
+## New ML Functionality
+
+Search for solid implementations, evaluate security and relevance, adapt to project structure, add tests, ensure reproducibility and efficient batching.

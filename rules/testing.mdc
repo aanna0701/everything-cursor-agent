@@ -1,0 +1,59 @@
+---
+description: "Use when writing or running tests. Covers coverage target, TDD workflow, pytest commands, ML/DL testing focus, numeric comparisons, reproducibility in tests."
+alwaysApply: false
+globs: ["**/test_*.py", "**/tests/**"]
+---
+
+# Testing Requirements (Python ML/DL)
+
+Use when writing or running tests.
+
+## Target Coverage: 80%+ on Data/Preprocessing
+
+Test types (prioritized for ML/DL):
+1. **Unit tests** — Data pipelines, transforms, metrics, utilities
+2. **Integration tests** — Model forward pass, training smoke tests
+3. **API tests** — Inference endpoints (if serving)
+
+## Test-Driven Development
+
+Workflow:
+1. Write test first (RED)
+2. Run test — it should FAIL
+3. Write minimal implementation (GREEN)
+4. Run test — it should PASS
+5. Refactor (IMPROVE)
+6. Verify coverage
+
+Use the **tdd-workflow** skill when doing TDD for new features or bug fixes. Test commands (e.g. `uv run pytest`, `uv run pytest --cov=...`) are in always-apply.
+
+## ML/DL Testing Focus
+
+**DO test:**
+- Data pipeline outputs (shapes, types, ranges)
+- Model forward pass (output shapes, no NaNs)
+- Training mechanics (1-2 steps run without error)
+- Metrics computation (edge cases)
+- Checkpoint save/load roundtrip
+
+**DON'T test:**
+- Training convergence (stochastic, flaky)
+- Exact loss values (non-deterministic)
+- GPU-specific behavior (use CPU for tests)
+
+## Numeric Comparisons
+
+```python
+# CORRECT: Use tolerances
+assert loss == pytest.approx(0.5, rel=1e-4)
+torch.testing.assert_close(out1, out2, rtol=1e-4, atol=1e-4)
+
+# WRONG: Exact comparison
+assert loss == 0.5  # Floating-point issues
+```
+
+## Reproducibility in Tests
+
+- Set seeds in a pytest fixture or `conftest.py` (torch, numpy, random).
+- Use CPU device in tests for CI compatibility.
+- Enable deterministic backends when possible (`torch.backends.cudnn.deterministic`, `torch.use_deterministic_algorithms(True, warn_only=True)`).

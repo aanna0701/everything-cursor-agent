@@ -1,0 +1,41 @@
+---
+description: "Global rules: English-only content, Python/uv, code style (type hints, pathlib, logging, file size, conventional commits), documentation, refactor, new project, and when to use skills."
+alwaysApply: true
+---
+
+# General
+
+- All file contents must be written in English only (code, comments, documentation, generated files, examples).
+
+# When Asked to Implement a Feature or Behavior
+
+- Write the implementation in Python.
+- Install required packages using uv (e.g. `uv add <pkg>` or `uv pip install <pkg>`).
+- Provide clear run instructions (e.g. `uv run python ...`) and a minimal example or test to reproduce.
+- Clean up temporary scripts or intermediate artifacts after implementation.
+- All generated code, comments, and auxiliary files in English.
+
+# Code Style (All Projects)
+
+- **Type hints** on all functions.
+- **pathlib** for paths; no raw string paths or `os.path` for new code.
+- **logging** instead of print; use `logging.getLogger(__name__)`.
+- Prefer **small files**: 200–400 lines typical, 600 max; high cohesion, one class/concept per file; organize by feature/domain.
+- Prefer **immutability**: frozen dataclasses for configs, create new dicts instead of mutating.
+- Use **dataclasses** (or Pydantic) for configuration, not bare dicts.
+- **Conventional commits**: `<type>: <description>` with types `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`.
+- When a project has `.cursor/rules`, follow them. Use `~/.cursor/skills` when relevant (e.g. **tdd-workflow** for new features, **security-review** for auth/APIs, **coding-standards** for style).
+- After making changes, verify with tests and lint as needed: `uv run pytest`, `uv run ruff check .`, `uv run pyright`.
+
+# When Asked to Draft Documentation
+
+- Extract from code comments first; analyze README.md for purpose, usage, structure, run steps.
+- Generate Markdown with: Overview, Install, Usage, Structure, Examples (if possible). All in English.
+
+# When Asked to Refactor
+
+- Make all code comments English; add/normalize type hints; preserve existing behavior unless requested otherwise; summarize changes and key diffs.
+
+# When Asked to Create a New Project
+
+- Generate README.md by default; propose a sensible structure and minimal runnable example; use uv for dependencies; include run/test/lint briefly. All generated files in English.

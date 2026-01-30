@@ -1,0 +1,78 @@
+---
+description: "Use when adding auth, handling user input, working with secrets, or deploying ML models. Covers mandatory security checks, secret management, safe serialization, model security, input validation."
+alwaysApply: false
+---
+
+# Security Guidelines (Python ML/DL)
+
+Use when adding auth, handling user input, working with secrets, or deploying ML models.
+
+## Mandatory Security Checks
+
+Before ANY commit:
+- [ ] No hardcoded secrets (API keys, passwords, tokens)
+- [ ] No unsafe pickle/torch.load on untrusted data
+- [ ] Input validation on all user-facing APIs
+- [ ] Dependency versions pinned and audited
+- [ ] Model files from trusted sources only
+- [ ] No sensitive data in logs
+
+## Secret Management
+
+```python
+import os
+
+# NEVER: Hardcoded secrets
+api_key = "sk-proj-xxxxx"  # WRONG!
+
+# ALWAYS: Environment variables
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("OPENAI_API_KEY environment variable not set")
+
+# BETTER: Use python-dotenv for local dev
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.environ["OPENAI_API_KEY"]
+```
+
+## Safe Serialization (CRITICAL)
+
+```python
+import torch
+
+# DANGEROUS: Unsafe loading (arbitrary code execution risk)
+model = torch.load(untrusted_file)  # NEVER for untrusted files!
+
+# SAFE: weights_only=True (PyTorch 2.0+)
+state_dict = torch.load(path, weights_only=True)
+
+# SAFER: Use safetensors for model weights
+from safetensors.torch import load_file, save_file
+state_dict = load_file(path)  # No pickle, no code execution
+
+# NEVER: pickle.load on untrusted data
+import pickle
+data = pickle.load(untrusted_file)  # Arbitrary code execution!
+```
+
+## Model Security
+
+- Only load from trusted sources (HuggingFace Hub, official repos).
+- Prefer `trust_remote_code=False` when loading models.
+- Do not load arbitrary `.pt`/`.pth` files from untrusted origins.
+
+## Input Validation (API Endpoints)
+
+Use Pydantic (or similar) for request validation: min/max length, sanitization (e.g. strip null bytes), type checks.
+
+## Dependency Security
+
+- Run `pip-audit` or equivalent; pin versions; use lock files (e.g. `uv lock`).
+
+## If You Find a Security Issue
+
+1. Stop and do not commit/push.
+2. Assess severity (data exposure, code execution).
+3. Fix critical issues first; rotate any exposed secrets.
+4. Review the codebase for similar issues. Use the **security-review** skill for a structured checklist.

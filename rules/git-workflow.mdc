@@ -1,0 +1,24 @@
+---
+description: "Use when opening pull requests or following feature implementation flow. Commit format is in always-apply; this rule covers PR workflow and feature flow."
+alwaysApply: false
+---
+
+# Git Workflow
+
+Use when creating pull requests or planning feature implementation. Commit message format (conventional commits) is defined in always-apply.
+
+## Pull Request Workflow
+
+When creating PRs:
+1. Analyze full commit history (not just latest commit)
+2. Use `git diff [base-branch]...HEAD` to see all changes
+3. Draft a clear PR summary
+4. Include a test plan
+5. Push with `-u` if new branch
+
+## Feature Implementation Flow
+
+1. **Plan first** — Break down into phases, identify dependencies and risks.
+2. **TDD** — Use the **tdd-workflow** skill: write tests first, then implement, then refactor; aim for 80%+ coverage.
+3. **Review** — After writing code, run tests and address issues; use **coding-standards** and **security-review** skills when relevant.
+4. **Commit & push** — Use conventional commits (see always-apply) and small, focused commits.

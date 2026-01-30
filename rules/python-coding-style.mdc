@@ -1,0 +1,67 @@
+---
+description: "Use when working on Python ML/DL code: device placement and reproducibility (seeds, deterministic backends). General style (type hints, pathlib, logging, file size) is in always-apply."
+alwaysApply: false
+globs: ["**/*.py"]
+---
+
+# Coding Style (Python ML/DL) — Device & Reproducibility
+
+Use when working on Python ML/DL code. Type hints, pathlib, logging, file organization, immutability, and dataclasses are in always-apply. This rule adds **device placement** and **reproducibility** only.
+
+## Device Placement (CRITICAL for ML/DL)
+
+Always explicitly manage device placement:
+
+```python
+# CORRECT: Explicit device management
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
+for batch in dataloader:
+    batch = {k: v.to(device) for k, v in batch.items()}
+    outputs = model(**batch)
+
+# WRONG: Implicit device (can cause CPU/GPU mixing)
+model = model.cuda()  # Hardcoded CUDA
+batch = batch.cuda()  # May fail if no GPU
+```
+
+### Device Placement Checklist
+- [ ] Device is configurable (not hardcoded)
+- [ ] All tensors moved to correct device: `.to(device)`
+- [ ] Model moved to device: `model.to(device)`
+- [ ] No CPU/GPU mixing in same operation
+- [ ] Device fallback to CPU when CUDA unavailable
+
+## Reproducibility
+
+### Seed Management
+
+```python
+import torch
+import numpy as np
+import random
+
+
+def set_seed(seed: int = 42) -> None:
+    """Set random seeds for reproducibility."""
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+
+    torch.use_deterministic_algorithms(True, warn_only=True)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+
+# Use in training script
+set_seed(config.seed)
+```
+
+### Reproducibility Checklist
+- [ ] Seeds set at start of training
+- [ ] NumPy and Python random seeds set
+- [ ] Deterministic algorithms enabled when possible
+- [ ] Seed value documented in config

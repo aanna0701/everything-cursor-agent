@@ -1,0 +1,25 @@
+---
+description: "Use when planning agent usage, managing context, or handling build/test failures. Covers context scope, task breakdown, and incremental fixes."
+alwaysApply: false
+---
+
+# Performance and Workflow (Cursor)
+
+Use when planning how to use the agent or manage context. Test/lint commands are in always-apply.
+
+## Context and Scope
+
+- Prefer smaller, focused tasks when possible (single-file edits, one feature at a time).
+- For large refactors or multi-file features, break into clear steps and use a todo list so the agent can track progress.
+
+## Task Breakdown
+
+- Use a short checklist or todo list for multi-step work.
+- Verify each step before moving on (run tests, lint, typecheck).
+
+## Build and Test Failures
+
+When builds or tests fail:
+1. Read the error message carefully
+2. Fix incrementally
+3. Re-run after each change
