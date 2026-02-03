@@ -52,6 +52,7 @@ Review papers by **type** (assign primary type or mix %), **deconstruct** agains
 - **Mathematical logic**: In key equations (loss, attention, etc.), physical/geometric meaning of each variable? (Cite equation numbers.)
 - **Ablation evidence**: Which component contributes most? (Cite table/section; list key ablations.)
 - **Efficiency check**: Params, FLOPs, latency vs baseline; increase vs performance gain—reasonable? (Cite numbers.)
+- **Validation experiments**: (1) What experiments were performed to validate the method? (e.g. main results, ablations, sensitivity, robustness, generalization). (2) Experimental design: baselines, datasets, protocols per experiment. (3) Summary of each experiment type and what it is intended to show. Cite §/Table/Fig.
 
 ### 3. Dataset — Reliability and usability
 
